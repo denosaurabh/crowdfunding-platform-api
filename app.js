@@ -29,7 +29,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://savory-earth.surge.sh',
+    origin: 'http://savory-earth.surge.sh',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
