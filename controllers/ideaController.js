@@ -78,6 +78,45 @@ exports.myIdeas = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.ideaFunc = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  // Func Parameter
+  const { func } = req.query;
+
+  console.log(req.user._id);
+
+  if (func === 'upvote') {
+    console.log('Upvote');
+
+    const isAlreadyUpvoted = await Idea.findOne({
+      _id: id,
+      upvotesBy: { $elemMatch: { $eq: req.user._id } }
+    });
+
+    console.log(isAlreadyUpvoted);
+
+    // If The User has already Upvoted
+    if (isAlreadyUpvoted) {
+      return res.status(200).json({
+        status: 'success',
+        result: 'Already Upvoted'
+      });
+    }
+
+    const data = await Idea.findByIdAndUpdate(id, {
+      $inc: { upvotes: 1 },
+      $push: { upvotesBy: req.user._id }
+    });
+
+    res.status(200).json({
+      status: 'success',
+      result: 'Upvoted',
+      data: { data }
+    });
+  }
+});
+
 exports.getAllIdeas = factoryController.getAll(Idea);
 exports.getIdeaOne = factoryController.getOne(Idea);
 exports.createIdea = factoryController.createOne(Idea);

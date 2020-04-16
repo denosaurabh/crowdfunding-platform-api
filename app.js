@@ -27,10 +27,12 @@ const app = express();
 
 */
 
-app.use(cors({
-    origin: 'http://adhesive-addition.surge.sh',
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}));
+  })
+);
 
 app.use(helmet());
 
@@ -53,7 +55,7 @@ app.use(compression());
 app.use(express.static(`${__dirname}/public`));
 
 // API Routes
-app.use('/v1/api/', ideaRoutes);
+app.use('/v1/api/idea', ideaRoutes);
 app.use('/v1/api/user', userRoute);
 
 app.all('*', (req, res, next) => {

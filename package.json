@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon server",
-    "start": "node server"
+    "start": "node server",
+    "prod": "set NODE_ENV=production&& nodemon server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

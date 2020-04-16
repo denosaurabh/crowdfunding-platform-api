@@ -12,6 +12,9 @@ router
 
 router.route('/myIdeas').get(authController.protect, ideaController.myIdeas);
 
-router.route('/:id').get(ideaController.getIdeaOne);
+router
+  .route('/:id')
+  .get(ideaController.getIdeaOne)
+  .post(authController.protect, ideaController.ideaFunc);
 
 module.exports = router;

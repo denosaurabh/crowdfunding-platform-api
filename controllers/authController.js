@@ -12,7 +12,7 @@ const signToken = id => {
   });
 };
 
-const createSendToken = (user, statusCode, req, res) => {
+const createSendToken = (user, statusCode, req, res) => {  
   const token = signToken(user._id);
 
   /*
@@ -38,6 +38,7 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -63,6 +64,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new AppError('Please provide email and password!', 400));
   }
+
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
 
