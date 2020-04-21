@@ -13,6 +13,8 @@ const AppError = require('./utils/appError');
 
 const userRoute = require('./routes/user.routes');
 const ideaRoutes = require('./routes/idea.routes');
+const universityRoutes = require('./routes/university.routes');
+const proposalRoutes = require('./routes/proposal.routes');
 
 const app = express();
 
@@ -29,7 +31,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://savory-earth.surge.sh',
+    origin: 'http://dapper-top.surge.sh',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
@@ -57,6 +59,8 @@ app.use(express.static(`${__dirname}/public`));
 // API Routes
 app.use('/v1/api/idea', ideaRoutes);
 app.use('/v1/api/user', userRoute);
+app.use('/v1/api/university', universityRoutes);
+app.use('/v1/api/proposal', proposalRoutes);
 
 app.all('*', (req, res, next) => {
   return next(new AppError("Can't find this Endpoint on the Server!", 404));

@@ -1,6 +1,6 @@
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-// const APIFeatures = require('./../utils/apiFeatures');
+const APIFeatures = require('./../utils/apiFeatures');
 
 // exports.deleteOne = Model =>
 //   catchAsync(async (req, res, next) => {
@@ -49,11 +49,14 @@ exports.createOne = Model =>
     });
   });
 
-exports.getOne = (Model, popOptions) =>
+exports.getOne = (Model, popOptionsOne, popOptionsTwo) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findById(req.params.id);
-    // if (popOptions) query = query.populate(popOptions);
-    // const doc = await query;
+    let query = Model.findById(req.params.id);
+
+    if (popOptionsOne) query = query.populate(popOptionsOne);
+    if (popOptionsTwo) query = query.populate(popOptionsTwo);
+
+    const doc = await query;
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
@@ -73,17 +76,13 @@ exports.getAll = Model =>
 
     const doc = await Model.find();
 
-    /*
-    const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    
+    // const features = new APIFeatures(Model.find(filter), req.query)
+    //   .filter()
+    //   .sort()
+    //   .limitFields()
+    //   .paginate();
 
-    const doc = await features.query;
-
-    */
+    // const doc = await features.query;
 
     // SEND RESPONSE
     res.status(200).json({

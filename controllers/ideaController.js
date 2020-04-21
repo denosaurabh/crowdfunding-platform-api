@@ -118,5 +118,9 @@ exports.ideaFunc = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllIdeas = factoryController.getAll(Idea);
-exports.getIdeaOne = factoryController.getOne(Idea);
+exports.getIdeaOne = factoryController.getOne(Idea, [
+  {
+    path: 'upvotesBy'
+  }
+]);
 exports.createIdea = factoryController.createOne(Idea);
