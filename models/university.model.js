@@ -39,6 +39,11 @@ const UniversitySchema = new mongoose.Schema({
       ref: 'User'
     }
   ],
+  invites: [
+    {
+      type: String
+    }
+  ],
   image: String,
   formedOn: Date
 });

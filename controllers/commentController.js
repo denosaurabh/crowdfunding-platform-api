@@ -8,11 +8,13 @@ const catchAsync = require('../utils/catchAsync');
 exports.createComment = catchAsync(async (req, res, next) => {
   req.body.uploadBy = req.user._id;
   req.body.proposalId = req.params.id;
+  req.body.byUser = req.user.name;
+  req.body.byUserJob = req.user.job;
 
   const comment = await Comment.create(req.body);
 
   await Proposal.findByIdAndUpdate(req.params.id, {
-    $push: { comments: comment._id }
+    $push: { comments: { $each: [comment._id], $position: 0 } }
   });
 
   res.status(201).json({

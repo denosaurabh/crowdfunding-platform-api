@@ -16,4 +16,8 @@ router
   .get(commentController.proposalAllComments)
   .post(authController.protect, commentController.createComment);
 
+router
+  .route('/:id/upvote')
+  .post(authController.protect, proposalController.proposalUpvote);
+
 module.exports = router;

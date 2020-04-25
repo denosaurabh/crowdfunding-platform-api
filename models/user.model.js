@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String
   },
+  university: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'University'
+  },
   job: String,
   country: String,
   passwordChangedAt: Date,

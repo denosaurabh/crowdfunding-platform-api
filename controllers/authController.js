@@ -12,7 +12,7 @@ const signToken = id => {
   });
 };
 
-const createSendToken = (user, statusCode, req, res) => {  
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
   /*
@@ -38,7 +38,6 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -49,10 +48,10 @@ exports.signup = catchAsync(async (req, res, next) => {
     country: req.body.country
   });
 
-  // const url = `${req.protocol}://${req.get('host')}/me`;
+  const url = `${req.protocol}://${req.get('host')}/me`;
 
-  // console.log(url);
-  // await new Email(newUser, url).sendWelcome();
+  console.log(url);
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, req, res);
 });

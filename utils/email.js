@@ -3,57 +3,58 @@ const nodemailer = require('nodemailer');
 module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
-    this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Jonas Schmedtmann <${process.env.EMAIL_FROM}>`;
+    this.from = `Idea App <${process.env.SENDMAIL_EMAIL}>`;
   }
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid
       return nodemailer.createTransport({
-        service: 'SendGrid',
+        service: 'gmail',
         auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD
+          user: process.env.SENDMAIL_EMAIL,
+          pass: process.env.SENDMAIL_PASSWORD
         }
       });
     }
-
-    return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
   }
 
   // Send the actual email
-  // async send(template, subject) {
-  //   // 1) Render HTML based on a pug template
-  //   const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
-  //     firstName: this.firstName,
-  //     url: this.url,
-  //     subject
-  //   });
+  async send(subject, text, alreadyEmail) {
+    // 2) Define email options
+    let mailOptions = {
+      from: this.from,
+      to: this.to,
+      subject,
+      text
+    };
 
-  //   // 2) Define email options
-  //   const mailOptions = {
-  //     from: this.from,
-  //     to: this.to,
-  //     subject,
-  //     html,
-  //     text: htmlToText.fromString(html)
-  //   };
+    if (alreadyEmail) {
+      console.log('Yes, already Mail');
 
-  //   // 3) Create a transport and send email
-  //   await this.newTransport().sendMail(mailOptions);
-  // }
+      mailOptions = {
+        from: this.from,
+        to: alreadyEmail,
+        subject,
+        text
+      };
+    }
+
+    // 3) Create a transport and send email
+    await this.newTransport().sendMail(mailOptions);
+  }
 
   async sendWelcome() {
-    await this.send('welcome', 'Welcome to the Natours Family!');
+    await this.send('welcome', 'Welcome to the Idea App!');
+  }
+
+  async inviteMemberinUniversity(university, userEmail) {
+    await this.send(
+      'Invitation',
+      `You have been invited as a Member by ${university} on your App! Invitation Link: ${this.url}`,
+      userEmail
+    );
   }
 
   async sendPasswordReset() {

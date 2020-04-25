@@ -40,6 +40,17 @@ const ProposalSchema = new mongoose.Schema({
   ],
   field: { type: String, required: [true, 'Proposal field is required!'] },
   upvotes: { type: Number, default: 0 },
+  upvotesBy: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User'
+    }
+  ],
+  accepted: {
+    type: Boolean,
+    default: false,
+    select: true
+  },
   uploadedOn: { type: Date }
 });
 

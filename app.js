@@ -31,7 +31,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://dapper-top.surge.sh',
+    origin: 'http://godly-hat.surge.sh',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
