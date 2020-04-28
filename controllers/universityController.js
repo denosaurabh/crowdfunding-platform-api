@@ -130,5 +130,17 @@ exports.myUniversity = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUniversity = factoryController.createOne(University);
+exports.createUniversity = catchAsync(async (req, res, next) => {
+  req.body.admin = req.user._id;
+
+  const doc = await University.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      data: doc
+    }
+  });
+});
+
 exports.getAlluniversities = factoryController.getAll(University);

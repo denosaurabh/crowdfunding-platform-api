@@ -33,6 +33,10 @@ const UniversitySchema = new mongoose.Schema({
       ref: 'Proposal'
     }
   ],
+  admin: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  },
   members: [
     {
       type: mongoose.Schema.ObjectId,

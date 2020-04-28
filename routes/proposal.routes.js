@@ -20,4 +20,12 @@ router
   .route('/:id/upvote')
   .post(authController.protect, proposalController.proposalUpvote);
 
+router
+  .route('/:id/accept')
+  .post(authController.protect, proposalController.acceptProposal);
+
+router
+  .route('/:id/decline')
+  .post(authController.protect, proposalController.declineProposal);
+
 module.exports = router;

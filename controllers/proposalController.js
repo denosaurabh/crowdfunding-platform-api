@@ -59,4 +59,66 @@ exports.proposalUpvote = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.acceptProposal = catchAsync(async (req, res, next) => {
+  console.log(req.body);
+  console.log('Accept Proposal');
+
+  const proposalId = req.params.id;
+  const { universityId } = req.body;
+
+  if (!proposalId || !universityId) {
+    return next(
+      new AppError('Please provide corrent Proposal and University Id', 400)
+    );
+  }
+
+  const university = await University.findOne({
+    _id: universityId,
+    admin: req.user._id,
+    proposals: proposalId
+  });
+
+  if (!university) {
+    return next(new AppError('No correct university found!', 403));
+  }
+
+  const updatedProposal = await Proposal.findByIdAndUpdate(proposalId, {
+    accepted: true
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: { proposal: updatedProposal }
+  });
+});
+
+exports.declineProposal = catchAsync(async (req, res, next) => {
+  const { proposalId, universityId } = req.body;
+
+  if (!proposalId || !universityId) {
+    return next(
+      new AppError('Please provide corrent Proposal and University Id', 400)
+    );
+  }
+
+  const university = University.findOne({
+    _id: universityId,
+    admin: req.user._id,
+    proposals: proposalId
+  });
+
+  if (!university) {
+    return next(new AppError('No correct university found!', 403));
+  }
+
+  const updatedProposal = Proposal.findByIdAndUpdate(proposalId, {
+    accepted: false
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: { proposal: updatedProposal }
+  });
+});
+
 exports.allProposals = factoryController.getAll(Proposal);
