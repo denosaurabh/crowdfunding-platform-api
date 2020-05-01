@@ -72,17 +72,17 @@ exports.getOne = (Model, popOptionsOne, popOptionsTwo) =>
 
 exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
-    // const filter = {};
+    const filter = {};
 
-    const doc = await Model.find();
+    //const doc = await Model.find();
 
-    // const features = new APIFeatures(Model.find(filter), req.query)
-    //   .filter()
-    //   .sort()
-    //   .limitFields()
-    //   .paginate();
+    const features = new APIFeatures(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
 
-    // const doc = await features.query;
+    const doc = await features.query;
 
     // SEND RESPONSE
     res.status(200).json({

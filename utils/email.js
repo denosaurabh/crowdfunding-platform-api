@@ -17,7 +17,7 @@ module.exports = class Email {
           pass: process.env.SENDMAIL_PASSWORD
         }
       });
-    }
+    } 
   }
 
   // Send the actual email

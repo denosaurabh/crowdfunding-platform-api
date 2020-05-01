@@ -41,8 +41,9 @@ const userSchema = new mongoose.Schema({
     ],
     trim: true
   },
-  avatar: {
-    type: String
+  imageCover: {
+    type: String,
+    default: 'user-default.png'
   },
   university: {
     type: mongoose.Schema.ObjectId,
@@ -57,7 +58,8 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
     select: false
-  }
+  },
+  joinedOn: Date
 });
 
 // Middlewares and Functions before Saving and after Saving
@@ -70,6 +72,10 @@ userSchema.pre('save', async function(next) {
 
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
+
+  // User Joined On
+  this.joinedOn = new Date().toLocaleString();
+
   next();
 });
 

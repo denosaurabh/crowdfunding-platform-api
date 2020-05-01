@@ -75,9 +75,7 @@ exports.inviteMember = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      message: 'Email send!'
-    }
+    message: `Invitation Email has send to ${userEmail}!`
   });
 });
 

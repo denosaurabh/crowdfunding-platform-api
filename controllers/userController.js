@@ -1,10 +1,8 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/user.model');
-const factoryHandlers = require('./factoryController');
 const catchasync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
 
 const multerStorage = multer.memoryStorage();
 
@@ -32,10 +30,10 @@ exports.resizeUserImages = catchasync(async (req, res, next) => {
   if (!req.files.avatar) return next();
 
   // 1) Cover image
-  req.body.avatar = `user-${req.user._id}-${Date.now()}-cover.jpeg`;
+  req.body.imageCover = `user-${req.user._id}-${Date.now()}-cover.jpeg`;
 
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
+  await sharp(req.files.avatar[0].buffer)
+    .resize(150, 150)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`public/images/users/${req.body.imageCover}`);
@@ -67,7 +65,7 @@ exports.updateMe = catchasync(async (req, res, next) => {
     'name',
     'email',
     'about',
-    'avatar',
+    'imageCover',
     'job',
     'country'
   );
@@ -79,6 +77,7 @@ exports.updateMe = catchasync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
+    message: 'User has updated successfully!',
     data: {
       user: updatedUser
     }

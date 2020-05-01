@@ -120,7 +120,7 @@ exports.ideaFunc = catchAsync(async (req, res, next) => {
 exports.getAllIdeas = factoryController.getAll(Idea);
 exports.getIdeaOne = factoryController.getOne(Idea, [
   {
-    path: 'upvotesBy'
+    path: 'uploadBy'
   }
 ]);
 exports.createIdea = factoryController.createOne(Idea);
