@@ -1,3 +1,5 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY__TEST);
+const iso3311a2 = require('iso-3166-1-alpha-2');
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/user.model');
@@ -85,7 +87,7 @@ exports.updateMe = catchasync(async (req, res, next) => {
 });
 
 exports.getMe = catchasync(async (req, res, next) => {
-  const me = await User.findById(req.user._id).select('-password');
+  const me = await User.findById(req.user._id).select('-password -accountId');
 
   res.status(200).json({
     status: 'success',
@@ -94,3 +96,52 @@ exports.getMe = catchasync(async (req, res, next) => {
     }
   });
 });
+
+exports.stripeAccountVerification = catchasync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  // Making Stripe Connected Account
+  const account = await stripe.accounts.create({
+    country: iso3311a2.getCode(req.user.country),
+    type: 'custom',
+    requested_capabilities: ['card_payments', 'transfers']
+  });
+
+  const accountId = account.id;
+
+  await User.findByIdAndUpdate(userId, {
+    accountId
+  });
+
+  const accountLink = await stripe.accountLinks.create({
+    account: accountId,
+    failure_url: `${req.protocol}://${req.get(
+      'host'
+    )}/v1/api/user/verify/failed`,
+    success_url: `${req.protocol}://${req.get(
+      'host'
+    )}/v1/api/user/verify/success`,
+    type: 'custom_account_verification',
+    collect: 'eventually_due'
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: accountLink.url
+  });
+});
+
+// Testing Purposes
+exports.accountVerifySuccess = (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'You account has Verified successfully!'
+  });
+};
+
+exports.accountVerifyFailed = (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'You account has not Verified!'
+  });
+};

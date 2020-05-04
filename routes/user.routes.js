@@ -24,4 +24,9 @@ router
     userController.updateMe
   );
 
+router.route('/verify/account').patch(userController.stripeAccountVerification);
+
+router.route('/verify/success').get(userController.accountVerifySuccess);
+router.route('/verify/failed').get(userController.accountVerifyFailed);
+
 module.exports = router;

@@ -113,7 +113,7 @@ exports.myUniversity = catchAsync(async (req, res, next) => {
   const myUniversity = await University.findOne({
     members: req.user._id
   })
-    .populate({ path: 'members' })
+    .populate({ path: 'members', select: '-accountId -password' })
     .populate({ path: 'proposals' });
 
   if (!myUniversity) {

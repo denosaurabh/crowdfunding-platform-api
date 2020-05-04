@@ -17,4 +17,8 @@ router
   .get(ideaController.getIdeaOne)
   .post(authController.protect, ideaController.ideaFunc);
 
+router
+  .route('/:id/support')
+  .post(authController.protect, ideaController.postIdeaPaymentIntent);
+
 module.exports = router;

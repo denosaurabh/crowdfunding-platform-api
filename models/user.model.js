@@ -49,6 +49,15 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'University'
   },
+  accountId: {
+    type: String,
+    required: true
+  },
+  accountVerified: {
+    type: Boolean,
+    default: false,
+    select: true
+  },
   job: String,
   country: String,
   passwordChangedAt: Date,

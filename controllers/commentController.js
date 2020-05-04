@@ -10,6 +10,7 @@ exports.createComment = catchAsync(async (req, res, next) => {
   req.body.proposalId = req.params.id;
   req.body.byUser = req.user.name;
   req.body.byUserJob = req.user.job;
+  req.body.imageCover = req.user.imageCover;
 
   const comment = await Comment.create(req.body);
 
@@ -26,7 +27,7 @@ exports.createComment = catchAsync(async (req, res, next) => {
 exports.proposalAllComments = catchAsync(async (req, res, next) => {
   const comments = await Comment.find({ proposalId: req.params.id }).populate({
     path: 'uploadBy',
-    select: '-password -email'
+    select: '-password -email -accountId'
   });
 
   res.status(200).json({

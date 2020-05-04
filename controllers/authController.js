@@ -1,3 +1,5 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY__TEST);
+const iso3311a2 = require('iso-3166-1-alpha-2');
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
@@ -38,6 +40,7 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -51,7 +54,10 @@ exports.signup = catchAsync(async (req, res, next) => {
   const url = `${req.protocol}://${req.get('host')}/me`;
 
   console.log(url);
-  await new Email(newUser, url).sendWelcome();
+
+  if (process.env.NODE_ENV === 'production') {
+    await new Email(newUser, url).sendWelcome();
+  }
 
   createSendToken(newUser, 201, req, res);
 });
