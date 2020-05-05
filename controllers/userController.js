@@ -97,13 +97,32 @@ exports.getMe = catchasync(async (req, res, next) => {
   });
 });
 
+exports.checkStripeAccount = catchasync(async (req, res, next) => {
+  if (!req.user.accountId) {
+    return next(
+      new AppError('You have no Business Account! Create a one!', 400)
+    );
+  }
+
+  const link = await stripe.accounts.createLoginLink(req.user.accountId);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      link: link.url
+    }
+  });
+});
+
 exports.stripeAccountVerification = catchasync(async (req, res, next) => {
   const authCode = req.query.code;
+  console.log(authCode);
 
   const response = await stripe.oauth.token({
     grant_type: 'authorization_code',
     code: authCode
   });
+  console.log(response);
 
   const connectedAccountId = response.stripe_user_id;
 
