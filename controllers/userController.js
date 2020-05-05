@@ -98,7 +98,7 @@ exports.getMe = catchasync(async (req, res, next) => {
 });
 
 exports.stripeAccountVerification = catchasync(async (req, res, next) => {
-  const authCode = req.body.code;
+  const authCode = req.query.code;
 
   const response = await stripe.oauth.token({
     grant_type: 'authorization_code',
