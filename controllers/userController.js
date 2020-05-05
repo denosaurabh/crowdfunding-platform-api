@@ -98,36 +98,50 @@ exports.getMe = catchasync(async (req, res, next) => {
 });
 
 exports.stripeAccountVerification = catchasync(async (req, res, next) => {
-  const userId = req.user._id;
+  const authCode = req.body.code;
 
-  // Making Stripe Connected Account
-  const account = await stripe.accounts.create({
-    country: iso3311a2.getCode(req.user.country),
-    type: 'custom',
-    requested_capabilities: ['card_payments', 'transfers']
+  const response = await stripe.oauth.token({
+    grant_type: 'authorization_code',
+    code: authCode
   });
 
-  const accountId = account.id;
+  const connectedAccountId = response.stripe_user_id;
 
-  await User.findByIdAndUpdate(userId, {
-    accountId
+  await User.findByIdAndUpdate(req.user._id, {
+    accountId: connectedAccountId,
+    accountVerified: true
   });
 
-  const accountLink = await stripe.accountLinks.create({
-    account: accountId,
-    failure_url: `${req.protocol}://${req.get(
-      'host'
-    )}/v1/api/user/verify/failed`,
-    success_url: `${req.protocol}://${req.get(
-      'host'
-    )}/v1/api/user/verify/success`,
-    type: 'custom_account_verification',
-    collect: 'eventually_due'
-  });
+  // const userId = req.user._id;
+
+  // // Making Stripe Connected Account
+  // const account = await stripe.accounts.create({
+  //   country: iso3311a2.getCode(req.user.country),
+  //   type: 'custom',
+  //   requested_capabilities: ['card_payments', 'transfers']
+  // });
+
+  // const accountId = account.id;
+
+  // await User.findByIdAndUpdate(userId, {
+  //   accountId
+  // });
+
+  // const accountLink = await stripe.accountLinks.create({
+  //   account: accountId,
+  //   failure_url: `${req.protocol}://${req.get(
+  //     'host'
+  //   )}/v1/api/user/verify/failed`,
+  //   success_url: `${req.protocol}://${req.get(
+  //     'host'
+  //   )}/v1/api/user/verify/success`,
+  //   type: 'custom_account_verification',
+  //   collect: 'eventually_due'
+  // });
 
   res.status(200).json({
     status: 'success',
-    data: accountLink.url
+    message: 'Your Account has been verified Successfully!'
   });
 });
 
