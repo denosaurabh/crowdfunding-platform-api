@@ -35,6 +35,7 @@ const IdeaSchema = new mongoose.Schema({
   fundPercent: { type: Number, default: 0 },
   upvotes: { type: Number, default: 0 },
   upvotesBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+  uploadedOn: Date,
   uploadBy: {
     type: mongoose.Schema.ObjectId,
     ref: 'User'
@@ -43,6 +44,7 @@ const IdeaSchema = new mongoose.Schema({
 
 IdeaSchema.pre('save', function(next) {
   this.fundPercent = (this.currentFunded / this.fundLimit) * 100;
+  this.uploadedOn = Date.now();
   next();
 });
 

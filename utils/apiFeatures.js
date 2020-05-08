@@ -11,7 +11,10 @@ class APIFeatures {
 
     // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    queryStr = queryStr.replace(
+      /\b(gte|gt|lte|lt|regex)\b/g,
+      match => `$${match}`
+    );
 
     this.query = this.query.find(JSON.parse(queryStr));
 
@@ -23,7 +26,7 @@ class APIFeatures {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort('-createdAt');
+      this.query = this.query.sort('-uploadedOn');
     }
 
     return this;
@@ -50,4 +53,5 @@ class APIFeatures {
     return this;
   }
 }
+
 module.exports = APIFeatures;
