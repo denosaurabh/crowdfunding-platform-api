@@ -22,6 +22,10 @@ router
 router.route('/:id').get(universityController.getuniversity);
 
 router
+  .route('/:id/member/:memberId/remove')
+  .post(authController.protect, universityController.removeMember);
+
+router
   .route('/:id/invite')
   .get(authController.protect, universityController.redeemInvitation)
   .post(authController.protect, universityController.inviteMember);

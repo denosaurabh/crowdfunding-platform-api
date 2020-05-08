@@ -55,7 +55,7 @@ const UniversitySchema = new mongoose.Schema({
 UniversitySchema.pre('save', function(next) {
   // eslint-disable-next-line new-cap
   this.formedOn = Date.now();
-
+  
   next();
 });
 

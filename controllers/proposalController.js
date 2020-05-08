@@ -60,9 +60,6 @@ exports.proposalUpvote = catchAsync(async (req, res, next) => {
 });
 
 exports.acceptProposal = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-  console.log('Accept Proposal');
-
   const proposalId = req.params.id;
   const { universityId } = req.body;
 
@@ -88,12 +85,15 @@ exports.acceptProposal = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
+    message: 'The Proposal has been sucessfully Accepted!',
     data: { proposal: updatedProposal }
   });
 });
 
 exports.declineProposal = catchAsync(async (req, res, next) => {
-  const { proposalId, universityId } = req.body;
+  const proposalId = req.params.id;
+
+  const { universityId } = req.body;
 
   if (!proposalId || !universityId) {
     return next(
@@ -101,23 +101,24 @@ exports.declineProposal = catchAsync(async (req, res, next) => {
     );
   }
 
-  const university = University.findOne({
-    _id: universityId,
-    admin: req.user._id,
-    proposals: proposalId
-  });
+  const university = await University.findById(universityId);
 
   if (!university) {
     return next(new AppError('No correct university found!', 403));
   }
 
-  const updatedProposal = Proposal.findByIdAndUpdate(proposalId, {
-    accepted: false
+  const updatedUniversity = await University.findOneAndUpdate({
+    _id: universityId,
+    admin: req.user._id,
+    $pull: { proposals: proposalId }
   });
+
+  await Proposal.findByIdAndDelete(proposalId);
 
   res.status(200).json({
     status: 'success',
-    data: { proposal: updatedProposal }
+    message: 'The Proposal has been Declined!',
+    data: updatedUniversity
   });
 });
 

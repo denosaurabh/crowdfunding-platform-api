@@ -141,4 +141,29 @@ exports.createUniversity = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.removeMember = catchAsync(async (req, res, next) => {
+  const { id, memberId } = req.params;
+
+  const university = await University.findOne({
+    _id: id,
+    admin: req.user._id
+  });
+
+  if (!university) {
+    return next(
+      new AppError('Seems like you are not the Admin of this University!', 403)
+    );
+  }
+
+  const updatedUniversity = await University.findByIdAndUpdate(id, {
+    $pull: { members: memberId }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'The User has been Removed from your University',
+    data: updatedUniversity
+  });
+});
+
 exports.getAlluniversities = factoryController.getAll(University);
