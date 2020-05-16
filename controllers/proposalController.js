@@ -5,6 +5,7 @@ const factoryController = require('./factoryController');
 
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const Email = require('../utils/email');
 
 exports.createProposal = catchAsync(async (req, res, next) => {
   req.body.upvotes = 0;
@@ -97,7 +98,7 @@ exports.declineProposal = catchAsync(async (req, res, next) => {
 
   if (!proposalId || !universityId) {
     return next(
-      new AppError('Please provide corrent Proposal and University Id', 400)
+      new AppError('Please provide current Proposal and University Id', 400)
     );
   }
 
@@ -119,6 +120,47 @@ exports.declineProposal = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'The Proposal has been Declined!',
     data: updatedUniversity
+  });
+});
+
+exports.archiveProposal = catchAsync(async (req, res, next) => {
+  const { universityId } = req.body;
+  const { id: proposalId } = req.params;
+
+  if (!proposalId || !universityId) {
+    return next(
+      new AppError('Please provide current Proposal and University Id', 400)
+    );
+  }
+
+  const updatedUniversity = await University.findByIdAndUpdate(universityId, {
+    $pull: { proposals: proposalId }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Proposal has been Archived!',
+    data: updatedUniversity
+  });
+});
+
+exports.sendEmailToUser = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { message } = req.body;
+
+  const proposal = await Proposal.findById(id).populate({
+    path: 'uploadBy'
+  });
+
+  console.log(proposal);
+
+  if (process.env.NODE_ENV === 'production') {
+    await new Email(proposal.uploadBy).sendEmailToUser(message);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'The Email has send to User!'
   });
 });
 

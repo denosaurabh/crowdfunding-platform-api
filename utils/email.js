@@ -4,42 +4,31 @@ module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
     this.url = url;
-    this.from = `Idea App <${process.env.SENDMAIL_EMAIL}>`;
+    this.from = `Idea App <${process.env.EMAIL_USERNAME}>`;
   }
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid
       return nodemailer.createTransport({
-        service: 'SendGrid',
+        service: 'gmail',
         auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_APIKEY
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_APIKEY
         }
       });
     }
   }
 
   // Send the actual email
-  async send(subject, text, alreadyEmail) {
+  async send(subject, text) {
     // 2) Define email options
-    let mailOptions = {
+    const mailOptions = {
       from: this.from,
       to: this.to,
       subject,
       text
     };
-
-    if (alreadyEmail) {
-      console.log('Yes, already Mail');
-
-      mailOptions = {
-        from: this.from,
-        to: alreadyEmail,
-        subject,
-        text
-      };
-    }
 
     // 3) Create a transport and send email
     await this.newTransport().sendMail(mailOptions);
@@ -49,12 +38,15 @@ module.exports = class Email {
     await this.send('welcome', 'Welcome to the Idea App!');
   }
 
-  async inviteMemberinUniversity(university, userEmail) {
+  async inviteMemberinUniversity(university) {
     await this.send(
       'Invitation',
-      `You have been invited as a Member by ${university} on your App! Invitation Link: ${this.url}`,
-      userEmail
+      `You have been invited as a Member by ${university} on your App! Invitation Link: ${this.url}`
     );
+  }
+
+  async sendEmailToUser(message) {
+    await this.send('Proposal Message', message);
   }
 
   async sendPasswordReset() {

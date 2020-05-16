@@ -68,9 +68,8 @@ exports.inviteMember = catchAsync(async (req, res, next) => {
   )}/v1/api/university/${universityId}/invite`;
 
   console.log(url);
-  await new Email('', url, userEmail).inviteMemberinUniversity(
-    updated.name,
-    userEmail
+  await new Email({ email: userEmail }, url).inviteMemberinUniversity(
+    updated.name
   );
 
   res.status(200).json({
@@ -116,10 +115,6 @@ exports.myUniversity = catchAsync(async (req, res, next) => {
     .populate({ path: 'members', select: '-accountId -password' })
     .populate({ path: 'proposals' });
 
-  if (!myUniversity) {
-    return next(new AppError('You are not a member of any university!', 200)); // To avoid Problems
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -163,6 +158,21 @@ exports.removeMember = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'The User has been Removed from your University',
     data: updatedUniversity
+  });
+});
+
+exports.getArchivedProposals = catchAsync(async (req, res, next) => {
+  let archivedProposals;
+
+  const { proposals } = await University.findOne({
+    members: req.user._id
+  }).populate({ path: 'proposals' });
+
+  archivedProposals = proposals.filter(el => el.archived);
+
+  res.status(200).json({
+    status: 'success',
+    data: archivedProposals
   });
 });
 

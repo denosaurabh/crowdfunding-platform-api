@@ -16,6 +16,9 @@ router.use(authController.protect);
 
 router.route('/me').get(userController.getMe, factoryController.getOne);
 
+router.route('/myIdeas').get(userController.getMyIdeas);
+router.route('/myIdeas/:id').get(userController.getMyIdea);
+
 router
   .route('/updateMe')
   .patch(

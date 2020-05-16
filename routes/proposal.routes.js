@@ -28,4 +28,12 @@ router
   .route('/:id/decline')
   .post(authController.protect, proposalController.declineProposal);
 
+router
+  .route('/:id/archive')
+  .post(authController.protect, proposalController.archiveProposal);
+
+router
+  .route('/:id/sendEmail')
+  .post(authController.protect, proposalController.sendEmailToUser);
+
 module.exports = router;
