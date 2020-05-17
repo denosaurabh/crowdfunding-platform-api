@@ -11,6 +11,8 @@ const cors = require('cors');
 const globalErorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
+const ideaController = require('./controllers/ideaController');
+
 const userRoute = require('./routes/user.routes');
 const ideaRoutes = require('./routes/idea.routes');
 const universityRoutes = require('./routes/university.routes');
@@ -42,6 +44,13 @@ app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Intent Webhook ( Stripe )
+app.post(
+  '/webhook-intent',
+  express.raw({ type: 'application/json' }),
+  ideaController.intentWebhook
+);
 
 // Limiting the Data
 app.use(express.json({ limit: '20kb' }));
