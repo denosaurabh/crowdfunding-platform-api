@@ -17,6 +17,7 @@ const userRoute = require('./routes/user.routes');
 const ideaRoutes = require('./routes/idea.routes');
 const universityRoutes = require('./routes/university.routes');
 const proposalRoutes = require('./routes/proposal.routes');
+const fundRoutes = require('./routes/fund.routes');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use('/v1/api/idea', ideaRoutes);
 app.use('/v1/api/user', userRoute);
 app.use('/v1/api/university', universityRoutes);
 app.use('/v1/api/proposal', proposalRoutes);
+app.use('/v1/api/fund', fundRoutes);
 
 app.all('*', (req, res, next) => {
   return next(new AppError("Can't find this Endpoint on the Server!", 404));

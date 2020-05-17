@@ -1,11 +1,10 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY__TEST);
 
 const Idea = require('../models/idea.model');
-const User = require('../models/user.model');
+const Fund = require('../models/fund.model');
 
 const factoryController = require('./factoryController');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 
 exports.myIdeas = catchAsync(async (req, res, next) => {
   console.log(req.user._id);
@@ -78,6 +77,13 @@ exports.postIdeaPaymentIntent = catchAsync(async (req, res, next) => {
     on_behalf_of: idea.uploadBy.accountId,
     transfer_data: {
       destination: idea.uploadBy.accountId
+    },
+    metadata: {
+      sender_name: req.user.name,
+      sender_email: req.user.email,
+      sender_img: req.user.imageCover,
+      sender_job: req.user.job,
+      IdeaId: req.params.id
     }
   });
 
@@ -115,21 +121,27 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
   }
 
   let intent = null;
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      intent = event.data.object;
-      console.log('Succeeded:', intent.id);
-      break;
-    case 'payment_intent.payment_failed':
-      intent = event.data.object;
-      // eslint-disable-next-line no-case-declarations
-      const message =
-        intent.last_payment_error && intent.last_payment_error.message;
-      console.log('Failed:', intent.id, message);
-      break;
 
-    default:
-      console.log('Default');
+  if (event.type === 'payment_intent.succeeded') {
+    intent = event.data.object;
+    console.log('Succeeded:', intent.id);
+
+    await Fund.create({
+      amount: intent.amount,
+      name: intent.metadata.sender_name,
+      job: intent.metadata.sender_job,
+      email: intent.metadata.sender_email,
+      img: intent.metadata.sender_img,
+      ideaId: intent.metadata.ideaId
+    });
+  } else if (event.type === 'payment_intent.payment_failed') {
+    intent = event.data.object;
+    const message =
+      intent.last_payment_error && intent.last_payment_error.message;
+
+    console.log('Failed:', intent.id, message);
+  } else {
+    console.log('Default');
   }
 
   res.sendStatus(200);
