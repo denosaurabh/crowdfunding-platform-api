@@ -83,7 +83,7 @@ exports.postIdeaPaymentIntent = catchAsync(async (req, res, next) => {
       sender_email: req.user.email,
       sender_img: req.user.imageCover,
       sender_job: req.user.job,
-      IdeaId: req.params.id
+      ideaId: req.params.id
     }
   });
 
