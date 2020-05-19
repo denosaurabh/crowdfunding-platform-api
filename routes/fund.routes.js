@@ -8,11 +8,18 @@ const router = express.Router();
 // Here id is IdeaId
 router
   .route('/:id')
-  .get(authController.protect, fundController.getAllIdeaFunds);
+  .get(
+    authController.protect,
+    fundController.getAllIdeaFunds
+  );
 
 // Here id is FundId
 router
   .route('/:id/thanks')
-  .post(authController.protect, fundController.sendThanksEmail);
+  .post(
+    authController.protect,
+    authController.userVerificationNeeded,
+    fundController.sendThanksEmail
+  );
 
 module.exports = router;

@@ -138,6 +138,7 @@ exports.createUniversity = catchAsync(async (req, res, next) => {
 
 exports.removeMember = catchAsync(async (req, res, next) => {
   const { id, memberId } = req.params;
+  console.log(req.user);
 
   const university = await University.findOne({
     _id: id,
@@ -148,6 +149,10 @@ exports.removeMember = catchAsync(async (req, res, next) => {
     return next(
       new AppError('Seems like you are not the Admin of this University!', 403)
     );
+  }
+
+  if (university.admin === memberId) {
+    return next(new AppError("Admin can't remove himself! :/", 403));
   }
 
   const updatedUniversity = await University.findByIdAndUpdate(id, {

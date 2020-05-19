@@ -10,6 +10,7 @@ router
   .get(universityController.getAlluniversities)
   .post(
     authController.protect,
+    authController.userVerificationNeeded,
     universityController.uploadUniversityImage,
     universityController.resizeUniversityImage,
     universityController.createUniversity
@@ -21,13 +22,15 @@ router
 
 router.route('/:id').get(universityController.getuniversity);
 
+router.use(authController.protect, authController.userVerificationNeeded);
+
 router
   .route('/:id/member/:memberId/remove')
-  .post(authController.protect, universityController.removeMember);
+  .post(universityController.removeMember);
 
 router
   .route('/:id/invite')
-  .get(authController.protect, universityController.redeemInvitation)
-  .post(authController.protect, universityController.inviteMember);
+  .get(universityController.redeemInvitation)
+  .post(universityController.inviteMember);
 
 module.exports = router;

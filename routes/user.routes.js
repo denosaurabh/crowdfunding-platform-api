@@ -18,6 +18,8 @@ router.use(authController.protect);
 
 router.route('/me').get(userController.getMe);
 
+router.use(authController.userVerificationNeeded);
+
 router.route('/myIdeas').get(userController.getMyIdeas);
 router.route('/myIdeas/:id').get(userController.getMyIdea);
 

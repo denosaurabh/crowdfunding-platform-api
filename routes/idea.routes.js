@@ -10,15 +10,20 @@ router
   .get(ideaController.getAllIdeas)
   .post(authController.protect, ideaController.createIdea);
 
-router.route('/myIdeas').get(authController.protect, ideaController.myIdeas);
-
 router
   .route('/:id')
   .get(ideaController.getIdeaOne)
   .post(authController.protect, ideaController.ideaFunc);
 
+router.use(authController.protect);
+
+router.route('/myIdeas').get(ideaController.myIdeas);
+
 router
   .route('/:id/support')
-  .post(authController.protect, ideaController.postIdeaPaymentIntent);
+  .post(
+    authController.userVerificationNeeded,
+    ideaController.postIdeaPaymentIntent
+  );
 
 module.exports = router;
