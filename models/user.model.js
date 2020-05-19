@@ -50,8 +50,7 @@ const userSchema = new mongoose.Schema({
     ref: 'University'
   },
   accountId: {
-    type: String,
-    required: true
+    type: String
   },
   accountVerified: {
     type: Boolean,
@@ -67,6 +66,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
     select: false
+  },
+  userVerificationToken: String,
+  userVerified: {
+    type: Boolean,
+    default: false,
+    select: true
   },
   joinedOn: Date
 });

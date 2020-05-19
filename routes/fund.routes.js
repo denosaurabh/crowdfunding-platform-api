@@ -1,9 +1,18 @@
 const express = require('express');
 
 const fundController = require('../controllers/fundController');
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.route('/:id').get(fundController.getAllIdeaFunds);
+// Here id is IdeaId
+router
+  .route('/:id')
+  .get(authController.protect, fundController.getAllIdeaFunds);
+
+// Here id is FundId
+router
+  .route('/:id/thanks')
+  .post(authController.protect, fundController.sendThanksEmail);
 
 module.exports = router;

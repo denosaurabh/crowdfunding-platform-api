@@ -12,9 +12,11 @@ router.route('/login').post(authController.login);
 router.route('/forgotpassword').post(authController.forgotPassword);
 router.route('/resetpassword/:token').patch(authController.resetPassword);
 
+router.route('/verify/user/:token').patch(authController.verifyUser);
+
 router.use(authController.protect);
 
-router.route('/me').get(userController.getMe, factoryController.getOne);
+router.route('/me').get(userController.getMe);
 
 router.route('/myIdeas').get(userController.getMyIdeas);
 router.route('/myIdeas/:id').get(userController.getMyIdea);

@@ -69,10 +69,12 @@ exports.postIdeaPaymentIntent = catchAsync(async (req, res, next) => {
     select: '-password'
   });
 
+  console.log(amountNum);
+
   // 2) Create Payment Intent
   const paymentIntent = await stripe.paymentIntents.create({
     payment_method_types: ['card'],
-    amount: amountNum * 100,
+    amount: amountNum,
     currency: 'usd',
     on_behalf_of: idea.uploadBy.accountId,
     transfer_data: {
@@ -83,7 +85,7 @@ exports.postIdeaPaymentIntent = catchAsync(async (req, res, next) => {
       sender_email: req.user.email,
       sender_img: req.user.imageCover,
       sender_job: req.user.job,
-      IdeaId: req.params.id
+      ideaId: req.params.id
     }
   });
 
@@ -134,6 +136,8 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
       img: intent.metadata.sender_img,
       ideaId: intent.metadata.ideaId
     });
+
+    // await Idea.fns
   } else if (event.type === 'payment_intent.payment_failed') {
     intent = event.data.object;
     const message =
@@ -144,7 +148,7 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
     console.log('Default');
   }
 
-  res.sendStatus(200);
+  res.sendStatus(201);
 });
 
 exports.getAllIdeas = factoryController.getAll(Idea);

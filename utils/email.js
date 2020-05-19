@@ -34,8 +34,11 @@ module.exports = class Email {
     await this.newTransport().sendMail(mailOptions);
   }
 
-  async sendWelcome() {
-    await this.send('welcome', 'Welcome to the Idea App!');
+  async sendWelcome(verifyUrl) {
+    await this.send(
+      'welcome',
+      `Welcome to the Idea App! Please verify you account here: ${verifyUrl}`
+    );
   }
 
   async inviteMemberinUniversity(university) {
@@ -47,6 +50,13 @@ module.exports = class Email {
 
   async sendEmailToUser(message) {
     await this.send('Proposal Message', message);
+  }
+
+  async sendThanksToFundiser(name) {
+    await this.send(
+      'Great Thanks!',
+      `Hello I am ${name} and want to give you a big Thanks You! to be part of our Idea and to fund it. We can never forgot your Support into this and giving you a great wishes :D`
+    );
   }
 
   async sendPasswordReset() {

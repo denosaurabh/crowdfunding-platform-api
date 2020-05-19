@@ -40,6 +40,15 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  // Creating User Verification Token
+  const verificationToken = crypto.randomBytes(32).toString('hex');
+
+  const verificationTokenHashed = crypto
+    .createHash('sha256')
+    .update(verificationToken)
+    .digest('hex');
+
+  // Creating User
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -47,15 +56,17 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     job: req.body.job,
     about: req.body.about,
-    country: req.body.country
+    country: req.body.country,
+    userVerificationToken: verificationTokenHashed
   });
 
   const url = `${req.protocol}://${req.get('host')}/me`;
+  const verifyUrl = `${process.env.FRONTEND_URL}/user/verify/${verificationToken}`;
 
   console.log(url);
 
   if (process.env.NODE_ENV === 'production') {
-    await new Email(newUser, url).sendWelcome();
+    await new Email(newUser, url).sendWelcome(verifyUrl);
   }
 
   createSendToken(newUser, 201, req, res);
@@ -124,6 +135,16 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError('User recently changed password! Please log in again.', 401)
     );
   }
+
+  // If User is not verified
+  // if (!currentUser.userVerified) {
+  //   return next(
+  //     new AppError(
+  //       'Sorry, please verify your account before doing this Action!.',
+  //       401
+  //     )
+  //   );
+  // }
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
@@ -250,6 +271,31 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
+
+  // 4) Log user in, send JWT
+  createSendToken(user, 200, req, res);
+});
+
+exports.verifyUser = catchAsync(async (req, res, next) => {
+  const { token } = req.params;
+
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    userVerificationToken: hashedToken
+  });
+
+  console.log(user);
+
+  if (!user) {
+    return next(new AppError('The Token is not valid!', 400));
+  }
+
+  user.userVerified = true;
+  await user.save({ validateBeforeSave: false });
 
   // 4) Log user in, send JWT
   createSendToken(user, 200, req, res);
