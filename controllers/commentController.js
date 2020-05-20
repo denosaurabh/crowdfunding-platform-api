@@ -1,8 +1,6 @@
 const Comment = require('../models/comment.model');
 const Proposal = require('../models/proposal.model');
-const factoryController = require('./factoryController');
 
-const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.createComment = catchAsync(async (req, res, next) => {
@@ -10,7 +8,7 @@ exports.createComment = catchAsync(async (req, res, next) => {
   req.body.proposalId = req.params.id;
   req.body.byUser = req.user.name;
   req.body.byUserJob = req.user.job;
-  req.body.imageCover = req.user.imageCover;
+  req.body.byUserImg = req.user.imageCover;
 
   const comment = await Comment.create(req.body);
 

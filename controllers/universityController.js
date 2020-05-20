@@ -117,9 +117,7 @@ exports.myUniversity = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      university: myUniversity
-    }
+    data: myUniversity
   });
 });
 
@@ -144,6 +142,8 @@ exports.removeMember = catchAsync(async (req, res, next) => {
     _id: id,
     admin: req.user._id
   });
+  
+  console.log(university, university.admin, memberId);
 
   if (!university) {
     return next(
@@ -151,7 +151,8 @@ exports.removeMember = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (university.admin === memberId) {
+  // eslint-disable-next-line eqeqeq
+  if (university.admin == memberId) {
     return next(new AppError("Admin can't remove himself! :/", 403));
   }
 

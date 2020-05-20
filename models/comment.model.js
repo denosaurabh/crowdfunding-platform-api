@@ -16,6 +16,7 @@ const CommentSchema = new mongoose.Schema({
   },
   byUser: String,
   byUserJob: String,
+  byUserImg: String,
   proposalId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Proposal'

@@ -23,6 +23,8 @@ router.use(authController.userVerificationNeeded);
 router.route('/myIdeas').get(userController.getMyIdeas);
 router.route('/myIdeas/:id').get(userController.getMyIdea);
 
+router.route('/myProposals').get(userController.getMyProposals);
+
 router
   .route('/updateMe')
   .patch(

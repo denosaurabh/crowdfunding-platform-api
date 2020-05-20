@@ -6,6 +6,7 @@ const User = require('../models/user.model');
 const catchasync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Idea = require('../models/idea.model');
+const Proposal = require('../models/proposal.model');
 
 const multerStorage = multer.memoryStorage();
 
@@ -96,6 +97,9 @@ exports.getMe = catchasync(async (req, res, next) => {
   });
 });
 
+/* My Ideas and Proposals */
+
+// Ideas
 exports.getMyIdeas = catchasync(async (req, res, next) => {
   const ideas = await Idea.find({ uploadBy: req.user._id });
 
@@ -114,6 +118,16 @@ exports.getMyIdea = catchasync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: idea
+  });
+});
+
+// Proposals
+exports.getMyProposals = catchasync(async (req, res, next) => {
+  const proposals = await Proposal.find({ uploadBy: req.user._id });
+
+  res.status(200).json({
+    status: 'success',
+    data: proposals
   });
 });
 

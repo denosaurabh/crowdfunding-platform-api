@@ -31,16 +31,21 @@ const IdeaSchema = new mongoose.Schema({
   field: { type: String, required: true },
   fundLimit: { type: Number, required: true },
   fundTiers: { type: Array, required: true },
-  currentFunded: Number,
+  currentFunded: { type: Number, default: 0 },
   fundPercent: { type: Number, default: 0 },
   upvotes: { type: Number, default: 0 },
   upvotesBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   uploadedOn: Date,
+  uploadByName: String,
   uploadBy: {
     type: mongoose.Schema.ObjectId,
     ref: 'User'
   }
 });
+
+// IdeaSchema.virtual('isUpvoted', function(userId) {
+//   this.isUpvoted = this.upvotesBy.includes(userId);
+// });
 
 IdeaSchema.pre('save', function(next) {
   this.fundPercent = (this.currentFunded / this.fundLimit) * 100;

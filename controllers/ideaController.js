@@ -41,6 +41,7 @@ exports.ideaFunc = catchAsync(async (req, res, next) => {
     if (isAlreadyUpvoted) {
       return res.status(200).json({
         status: 'success',
+        message: 'Already Upvoted',
         result: 'Already Upvoted'
       });
     }
@@ -127,6 +128,10 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
   if (event.type === 'payment_intent.succeeded') {
     intent = event.data.object;
     console.log('Succeeded:', intent.id);
+
+    await Idea.findByIdAndUpdate(intent.metadata.ideaId, {
+      $inc: { currentFunded: intent.amount }
+    });
 
     await Fund.create({
       amount: intent.amount,

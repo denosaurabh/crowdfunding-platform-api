@@ -38,6 +38,7 @@ exports.updateOne = Model =>
 exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
     req.body.uploadBy = req.user._id;
+    req.body.uploadByName = req.user.name;
 
     const doc = await Model.create(req.body);
 

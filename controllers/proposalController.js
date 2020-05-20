@@ -35,11 +35,11 @@ exports.getProposal = factoryController.getOne(
 );
 
 exports.proposalUpvote = catchAsync(async (req, res, next) => {
-  const proposalId = req.params.id;
+  const { id } = req.params;
   console.log(req.user.name);
 
   const isAlreadyUpvoted = await Proposal.findOne({
-    _id: proposalId,
+    _id: id,
     upvotesBy: req.user._id
   });
 
@@ -47,10 +47,15 @@ exports.proposalUpvote = catchAsync(async (req, res, next) => {
     return next(new AppError('Already Upvoted!', 200)); // Hack, to avoid Problems
   }
 
-  const updatedDoc = await Proposal.findByIdAndUpdate(proposalId, {
+  console.log(isAlreadyUpvoted, id, req.user._id);
+
+  // eslint-disable-next-line radix
+  const updatedDoc = await Proposal.findByIdAndUpdate(id, {
     $inc: { upvotes: 1 },
     $push: { upvotesBy: req.user._id }
   });
+
+  console.log(updatedDoc);
 
   res.status(200).json({
     status: 'success',
