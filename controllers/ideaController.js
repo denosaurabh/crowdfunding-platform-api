@@ -7,8 +7,6 @@ const factoryController = require('./factoryController');
 const catchAsync = require('../utils/catchAsync');
 
 exports.myIdeas = catchAsync(async (req, res, next) => {
-  console.log(req.user._id);
-
   const myIdeas = await Idea.find({ uploadBy: req.user._id });
 
   res.status(200).json({
@@ -25,17 +23,11 @@ exports.ideaFunc = catchAsync(async (req, res, next) => {
   // Func Parameter
   const { func } = req.query;
 
-  console.log(req.user._id);
-
   if (func === 'upvote') {
-    console.log('Upvote');
-
     const isAlreadyUpvoted = await Idea.findOne({
       _id: id,
       upvotesBy: { $elemMatch: { $eq: req.user._id } }
     });
-
-    console.log(isAlreadyUpvoted);
 
     // If The User has already Upvoted
     if (isAlreadyUpvoted) {
@@ -69,8 +61,6 @@ exports.postIdeaPaymentIntent = catchAsync(async (req, res, next) => {
     path: 'uploadBy',
     select: '-password'
   });
-
-  console.log(amountNum);
 
   // 2) Create Payment Intent
   const paymentIntent = await stripe.paymentIntents.create({
@@ -127,8 +117,6 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
 
   if (event.type === 'payment_intent.succeeded') {
     intent = event.data.object;
-    console.log('Succeeded:', intent.id);
-
     await Idea.findByIdAndUpdate(intent.metadata.ideaId, {
       $inc: { currentFunded: intent.amount }
     });
@@ -148,9 +136,8 @@ exports.intentWebhook = catchAsync(async (req, res, next) => {
     const message =
       intent.last_payment_error && intent.last_payment_error.message;
 
+    // eslint-disable-next-line no-console
     console.log('Failed:', intent.id, message);
-  } else {
-    console.log('Default');
   }
 
   res.sendStatus(201);

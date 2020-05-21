@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const emailTemplate = require('./emailTemplate');
 
 module.exports = class Email {
   constructor(user, url) {
@@ -27,7 +28,7 @@ module.exports = class Email {
       from: this.from,
       to: this.to,
       subject,
-      text
+      html: emailTemplate(text)
     };
 
     // 3) Create a transport and send email

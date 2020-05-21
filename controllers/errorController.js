@@ -19,6 +19,12 @@ const handleValidationErrorDB = err => {
   return new AppError(message, 400);
 };
 
+const handleJsonWebTokenError = err => {
+  const message = 'Someting wrong occured, Please try to login Again!';
+
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err, req, res) => {
   // A) API
   return res.status(err.statusCode).json({
@@ -69,6 +75,7 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
       error = handleValidationErrorDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJsonWebTokenError();
 
     sendErrorProd(error, req, res);
   }

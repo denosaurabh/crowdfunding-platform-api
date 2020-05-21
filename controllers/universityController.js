@@ -142,12 +142,10 @@ exports.removeMember = catchAsync(async (req, res, next) => {
     _id: id,
     admin: req.user._id
   });
-  
-  console.log(university, university.admin, memberId);
 
   if (!university) {
     return next(
-      new AppError('Seems like you are not the Admin of this University!', 403)
+      new AppError('Only Admin can remove members of this University!', 403)
     );
   }
 
