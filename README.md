@@ -1,2 +1,2 @@
 # mariorossi-backend
-A nice client Mariorossi Application Backend for his Crowd Funding Platform 🙂 💲
+A Crowdfunding Platform Application Backend made with nodejs, mongodb, mongoose, stripe for payments, nodemailer for emails. 🙂 💲
