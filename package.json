@@ -26,7 +26,7 @@
     "nodemailer": "^6.4.16",
     "sharp": "^0.25.1",
     "stripe": "^7.15.0",
-    "validator": "^12.1.0",
+    "validator": "^13.7.0",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
